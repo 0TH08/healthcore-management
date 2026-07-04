@@ -599,3 +599,70 @@ body {
   gap: 6px;
   flex-wrap: wrap;
 }
+
+/* --- Admin Infrastructure --- */
+
+.admin-row {
+  padding: 6px 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #eee;
+}
+
+/* --- Audit Logs --- */
+
+.audit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.audit-row {
+  background: #fff;
+  border-radius: 6px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.audit-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.audit-action {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.audit-entity {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.audit-date {
+  font-size: 0.8rem;
+  color: #888;
+  margin-left: auto;
+}
+
+.audit-admin {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 2px;
+}
+
+.audit-details {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 4px;
+  padding: 6px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}

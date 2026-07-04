@@ -21,7 +21,10 @@ import NurseDashboardPage from './pages/nurse/NurseDashboardPage';
 import TriageQueuePage from './pages/nurse/TriageQueuePage';
 import BedDashboardPage from './pages/nurse/BedDashboardPage';
 import DeviceStatusPage from './pages/nurse/DeviceStatusPage';
-import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import StaffManagementPage from './pages/admin/StaffManagementPage';
+import InfrastructureManagementPage from './pages/admin/InfrastructureManagementPage';
+import AuditLogsPage from './pages/admin/AuditLogsPage';
 
 function RootRedirect() {
   const { user, token } = useAuth();
@@ -62,7 +65,10 @@ export default function App() {
               <Route path="/nurse/devices" element={<DeviceStatusPage />} />
             </Route>
             <Route element={<ProtectedRoute roles={['ADMIN']} />}>
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/admin/staff" element={<StaffManagementPage />} />
+              <Route path="/admin/infrastructure" element={<InfrastructureManagementPage />} />
+              <Route path="/admin/audit" element={<AuditLogsPage />} />
             </Route>
           </Route>
         </Route>

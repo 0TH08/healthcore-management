@@ -32,6 +32,9 @@ export default function Navbar() {
     ],
     ADMIN: [
       { label: 'Dashboard', path: '/admin' },
+      { label: 'Staff', path: '/admin/staff' },
+      { label: 'Infrastructure', path: '/admin/infrastructure' },
+      { label: 'Audit', path: '/admin/audit' },
     ],
   };
 
