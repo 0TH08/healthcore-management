@@ -3,11 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../auth/AuthContext';
 
-export default function LoginPage() {
-  const { login, user } = useAuth();
+const ROLES = ['PATIENT', 'DOCTOR', 'NURSE', 'ADMIN'] as const;
+
+export default function RegisterPage() {
+  const { register, user } = useAuth();
   const navigate = useNavigate();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<string>('PATIENT');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -18,12 +22,12 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     try {
-      await login(email, password);
+      await register(name, email, password, role);
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.data?.message) {
         setError(err.response.data.message);
       } else {
-        setError('Invalid email or password');
+        setError('Registration failed');
       }
     }
   };
@@ -31,8 +35,16 @@ export default function LoginPage() {
   return (
     <div className="page-center">
       <form className="card" onSubmit={handleSubmit}>
-        <h1>Sign In</h1>
+        <h1>Create Account</h1>
         {error && <div className="alert alert-error">{error}</div>}
+        <label>Full Name</label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="John Doe"
+          required
+        />
         <label>Email</label>
         <input
           type="email"
@@ -46,13 +58,19 @@ export default function LoginPage() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
+          placeholder="At least 8 characters"
           required
+          minLength={8}
         />
-        <button type="submit" className="btn btn-primary btn-block">Sign In</button>
+        <label>Role</label>
+        <select value={role} onChange={(e) => setRole(e.target.value)}>
+          {ROLES.map((r) => (
+            <option key={r} value={r}>{r.charAt(0) + r.slice(1).toLowerCase()}</option>
+          ))}
+        </select>
+        <button type="submit" className="btn btn-primary btn-block">Register</button>
         <div className="card-links">
-          <Link to="/register">Create an account</Link>
-          <Link to="/recover-password">Forgot password?</Link>
+          <Link to="/login">Already have an account? Sign in</Link>
         </div>
       </form>
     </div>

@@ -50,11 +50,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = useCallback(async (name: string, email: string, password: string, role: string) => {
     setLoading(true);
     try {
-      await apiClient.post('/auth/register', { name, email, password, role });
+      const res = await apiClient.post('/auth/register', { name, email, password, role });
+      const { token: jwt, user: u } = res.data;
+      persist(u, jwt);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [persist]);
 
   const logout = useCallback(() => {
     persist(null, null);
