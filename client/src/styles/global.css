@@ -487,3 +487,115 @@ body {
 .edit-form textarea {
   resize: vertical;
 }
+
+/* --- Triage --- */
+
+.triage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.triage-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.triage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.priority-badge {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.priority-critical { background: #fdecea; color: #b71c1c; }
+.priority-high { background: #fff3cd; color: #e65100; }
+.priority-medium { background: #e3f2fd; color: #0d47a1; }
+.priority-low { background: #e8f5e9; color: #2e7d32; }
+
+.triage-body {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.triage-body p {
+  margin: 2px 0;
+}
+
+.triage-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.triage-action-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.triage-action-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.triage-action-group select {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  background: #fff;
+}
+
+/* --- Resource Grid --- */
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.resource-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border-left: 4px solid #ccc;
+}
+
+.resource-unoccupied { border-left-color: #4caf50; }
+.resource-occupied { border-left-color: #ff9800; }
+
+.resource-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.resource-meta {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.resource-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}

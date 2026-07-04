@@ -17,7 +17,10 @@ import PatientSearchPage from './pages/doctor/PatientSearchPage';
 import PatientMedicalRecordPage from './pages/doctor/PatientMedicalRecordPage';
 import PrescriptionPage from './pages/doctor/PrescriptionPage';
 import DoctorSchedulePage from './pages/doctor/DoctorSchedulePage';
-import NurseDashboard from './pages/nurse/NurseDashboard';
+import NurseDashboardPage from './pages/nurse/NurseDashboardPage';
+import TriageQueuePage from './pages/nurse/TriageQueuePage';
+import BedDashboardPage from './pages/nurse/BedDashboardPage';
+import DeviceStatusPage from './pages/nurse/DeviceStatusPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
 function RootRedirect() {
@@ -53,7 +56,10 @@ export default function App() {
               <Route path="/doctor/schedule" element={<DoctorSchedulePage />} />
             </Route>
             <Route element={<ProtectedRoute roles={['NURSE']} />}>
-              <Route path="/nurse" element={<NurseDashboard />} />
+              <Route path="/nurse" element={<NurseDashboardPage />} />
+              <Route path="/nurse/triage" element={<TriageQueuePage />} />
+              <Route path="/nurse/beds" element={<BedDashboardPage />} />
+              <Route path="/nurse/devices" element={<DeviceStatusPage />} />
             </Route>
             <Route element={<ProtectedRoute roles={['ADMIN']} />}>
               <Route path="/admin" element={<AdminDashboard />} />

@@ -26,6 +26,9 @@ export default function Navbar() {
     ],
     NURSE: [
       { label: 'Dashboard', path: '/nurse' },
+      { label: 'Triage', path: '/nurse/triage' },
+      { label: 'Beds', path: '/nurse/beds' },
+      { label: 'Devices', path: '/nurse/devices' },
     ],
     ADMIN: [
       { label: 'Dashboard', path: '/admin' },
