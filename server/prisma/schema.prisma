@@ -3,6 +3,296 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+}
+
+model UserAccount {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole
+  status    AccountStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patientProfile PatientProfile?
+  staffProfile   StaffProfile?
+  auditLogs      AuditLog[]
+}
+
+model PatientProfile {
+  id          Int      @id @default(autoincrement())
+  dateOfBirth DateTime
+  phone       String
+  address     String
+  userId      Int      @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user          UserAccount    @relation(fields: [userId], references: [id])
+  appointments  Appointment[]
+  medicalRecords MedicalRecord[]
+  triageCases   TriageCase[]
+}
+
+model StaffProfile {
+  id             Int      @id @default(autoincrement())
+  specialization String?
+  phone          String?
+  departmentId   Int
+  userId         Int      @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user       UserAccount   @relation(fields: [userId], references: [id])
+  department Department    @relation(fields: [departmentId], references: [id])
+  timeSlots  TimeSlot[]
+  appointments Appointment[]  @relation("DoctorAppointments")
+  triageCases  TriageCase[]   @relation("NurseTriageCases")
+  schedules    Schedule[]
+}
+
+model HospitalNetwork {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  hospitals Hospital[]
+}
+
+model Hospital {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  networkId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  network     HospitalNetwork @relation(fields: [networkId], references: [id])
+  departments Department[]
+}
+
+model Department {
+  id        Int      @id @default(autoincrement())
+  name      String
+  hospitalId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  hospital      Hospital        @relation(fields: [hospitalId], references: [id])
+  staffProfiles StaffProfile[]
+  timeSlots     TimeSlot[]
+  beds          Bed[]
+  medicalDevices MedicalDevice[]
+  schedules     Schedule[]
+}
+
+model TimeSlot {
+  id           Int      @id @default(autoincrement())
+  date         DateTime
+  startTime    String
+  endTime      String
+  isBooked     Boolean  @default(false)
+  doctorId     Int
+  departmentId Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  doctor     StaffProfile @relation(fields: [doctorId], references: [id])
+  department Department   @relation(fields: [departmentId], references: [id])
+  appointment Appointment?
+}
+
+model Appointment {
+  id           Int      @id @default(autoincrement())
+  patientId    Int
+  doctorId     Int
+  timeSlotId   Int      @unique
+  status       AppointmentStatus @default(REQUESTED)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  patient  PatientProfile     @relation(fields: [patientId], references: [id])
+  doctor   StaffProfile       @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  timeSlot TimeSlot           @relation(fields: [timeSlotId], references: [id])
+  payment  PaymentTransaction?
+}
+
+model PaymentTransaction {
+  id            Int      @id @default(autoincrement())
+  appointmentId Int      @unique
+  amount        Float
+  status        PaymentStatus @default(PENDING)
+  paymentDate   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+}
+
+model MedicalRecord {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  diagnosis   String
+  notes       String?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  patient      PatientProfile @relation(fields: [patientId], references: [id])
+  prescriptions Prescription[]
+  allergies    Allergy[]
+}
+
+model Prescription {
+  id              Int      @id @default(autoincrement())
+  medicalRecordId Int
+  medication      String
+  dosage          String
+  frequency       String
+  startDate       DateTime
+  endDate         DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  medicalRecord MedicalRecord @relation(fields: [medicalRecordId], references: [id])
+}
+
+model Allergy {
+  id              Int      @id @default(autoincrement())
+  medicalRecordId Int
+  allergen        String
+  severity        String
+  reaction        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  medicalRecord MedicalRecord @relation(fields: [medicalRecordId], references: [id])
+}
+
+model TriageCase {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  nurseId     Int?
+  priority    TriagePriority @default(LOW)
+  status      TriageStatus   @default(WAITING)
+  symptoms    String
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  patient PatientProfile @relation(fields: [patientId], references: [id])
+  nurse   StaffProfile?  @relation("NurseTriageCases", fields: [nurseId], references: [id])
+}
+
+model Bed {
+  id           Int      @id @default(autoincrement())
+  departmentId Int
+  bedNumber    String
+  status       BedStatus @default(UNOCCUPIED)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  department Department @relation(fields: [departmentId], references: [id])
+}
+
+model MedicalDevice {
+  id           Int          @id @default(autoincrement())
+  departmentId Int
+  name         String
+  type         String
+  status       DeviceStatus @default(AVAILABLE)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  department Department @relation(fields: [departmentId], references: [id])
+}
+
+model Schedule {
+  id           Int      @id @default(autoincrement())
+  staffId      Int
+  departmentId Int
+  date         DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  staff      StaffProfile @relation(fields: [staffId], references: [id])
+  department Department   @relation(fields: [departmentId], references: [id])
+  shifts     Shift[]
+}
+
+model Shift {
+  id         Int      @id @default(autoincrement())
+  scheduleId Int
+  startTime  String
+  endTime    String
+  type       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  schedule Schedule @relation(fields: [scheduleId], references: [id])
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  adminId   Int
+  action    String
+  entity    String
+  entityId  Int
+  details   String?
+  createdAt DateTime @default(now())
+
+  admin UserAccount @relation(fields: [adminId], references: [id])
+}
+
+enum UserRole {
+  PATIENT
+  DOCTOR
+  NURSE
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum AppointmentStatus {
+  REQUESTED
+  BOOKED
+  PAID
+  COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum TriagePriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TriageStatus {
+  WAITING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum BedStatus {
+  UNOCCUPIED
+  OCCUPIED
+}
+
+enum DeviceStatus {
+  AVAILABLE
+  IN_USE
+  UNDER_MAINTENANCE
 }
