@@ -21,6 +21,8 @@ export default function Navbar() {
     ],
     DOCTOR: [
       { label: 'Dashboard', path: '/doctor' },
+      { label: 'Patients', path: '/doctor/patients' },
+      { label: 'Schedule', path: '/doctor/schedule' },
     ],
     NURSE: [
       { label: 'Dashboard', path: '/nurse' },

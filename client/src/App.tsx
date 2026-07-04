@@ -12,7 +12,11 @@ import AppointmentBookingPage from './pages/patient/AppointmentBookingPage';
 import MyAppointmentsPage from './pages/patient/MyAppointmentsPage';
 import PaymentPage from './pages/patient/PaymentPage';
 import MyMedicalRecordPage from './pages/patient/MyMedicalRecordPage';
-import DoctorDashboard from './pages/doctor/DoctorDashboard';
+import DoctorDashboardPage from './pages/doctor/DoctorDashboardPage';
+import PatientSearchPage from './pages/doctor/PatientSearchPage';
+import PatientMedicalRecordPage from './pages/doctor/PatientMedicalRecordPage';
+import PrescriptionPage from './pages/doctor/PrescriptionPage';
+import DoctorSchedulePage from './pages/doctor/DoctorSchedulePage';
 import NurseDashboard from './pages/nurse/NurseDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
@@ -42,7 +46,11 @@ export default function App() {
               <Route path="/patient/records" element={<MyMedicalRecordPage />} />
             </Route>
             <Route element={<ProtectedRoute roles={['DOCTOR']} />}>
-              <Route path="/doctor" element={<DoctorDashboard />} />
+              <Route path="/doctor" element={<DoctorDashboardPage />} />
+              <Route path="/doctor/patients" element={<PatientSearchPage />} />
+              <Route path="/doctor/patients/:patientId" element={<PatientMedicalRecordPage />} />
+              <Route path="/doctor/patients/:patientId/records/:recordId/prescription" element={<PrescriptionPage />} />
+              <Route path="/doctor/schedule" element={<DoctorSchedulePage />} />
             </Route>
             <Route element={<ProtectedRoute roles={['NURSE']} />}>
               <Route path="/nurse" element={<NurseDashboard />} />
