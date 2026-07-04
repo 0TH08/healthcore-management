@@ -6,7 +6,12 @@ import HomePage from './pages/public/HomePage';
 import LoginPage from './pages/public/LoginPage';
 import RegisterPage from './pages/public/RegisterPage';
 import PasswordRecoveryPage from './pages/public/PasswordRecoveryPage';
-import PatientDashboard from './pages/patient/PatientDashboard';
+import PatientDashboardPage from './pages/patient/PatientDashboardPage';
+import SearchAppointmentsPage from './pages/patient/SearchAppointmentsPage';
+import AppointmentBookingPage from './pages/patient/AppointmentBookingPage';
+import MyAppointmentsPage from './pages/patient/MyAppointmentsPage';
+import PaymentPage from './pages/patient/PaymentPage';
+import MyMedicalRecordPage from './pages/patient/MyMedicalRecordPage';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import NurseDashboard from './pages/nurse/NurseDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -29,7 +34,12 @@ export default function App() {
           <Route element={<MainLayout />}>
             <Route path="/" element={<RootRedirect />} />
             <Route element={<ProtectedRoute roles={['PATIENT']} />}>
-              <Route path="/patient" element={<PatientDashboard />} />
+              <Route path="/patient" element={<PatientDashboardPage />} />
+              <Route path="/patient/search" element={<SearchAppointmentsPage />} />
+              <Route path="/patient/book" element={<AppointmentBookingPage />} />
+              <Route path="/patient/appointments" element={<MyAppointmentsPage />} />
+              <Route path="/patient/pay" element={<PaymentPage />} />
+              <Route path="/patient/records" element={<MyMedicalRecordPage />} />
             </Route>
             <Route element={<ProtectedRoute roles={['DOCTOR']} />}>
               <Route path="/doctor" element={<DoctorDashboard />} />

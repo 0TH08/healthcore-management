@@ -15,6 +15,9 @@ export default function Navbar() {
   const roleLinks: Record<string, { label: string; path: string }[]> = {
     PATIENT: [
       { label: 'Dashboard', path: '/patient' },
+      { label: 'Book', path: '/patient/search' },
+      { label: 'Appointments', path: '/patient/appointments' },
+      { label: 'Records', path: '/patient/records' },
     ],
     DOCTOR: [
       { label: 'Dashboard', path: '/doctor' },
