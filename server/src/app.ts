@@ -5,6 +5,7 @@ import healthRoutes from './modules/health/health.routes';
 import authRoutes from './modules/auth/auth.routes';
 import appointmentRoutes from './modules/appointments/appointment.routes';
 import paymentRoutes from './modules/payments/payment.routes';
+import medicalRecordRoutes from './modules/medical-records/medical-record.routes';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', appointmentRoutes);
 app.use('/api', paymentRoutes);
+app.use('/api', medicalRecordRoutes);
 
 app.use(errorMiddleware);
 
