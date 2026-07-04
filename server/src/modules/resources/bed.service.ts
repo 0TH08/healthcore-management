@@ -1,4 +1,5 @@
 import { prisma } from '../../utils/prisma';
+import { BedStatus } from '@prisma/client';
 import { AppError } from '../../middleware/error.middleware';
 
 export class BedService {
@@ -20,6 +21,35 @@ export class BedService {
       departmentName: b.department.name,
       hospitalName: b.department.hospital.name,
     }));
+  }
+
+  static async create(data: { bedNumber: string; departmentId: number }) {
+    const department = await prisma.department.findUnique({ where: { id: data.departmentId } });
+    if (!department) throw new AppError('Department not found', 404);
+
+    return prisma.bed.create({
+      data: { bedNumber: data.bedNumber, departmentId: data.departmentId, status: 'UNOCCUPIED' },
+    });
+  }
+
+  static async update(bedId: number, data: { bedNumber?: string; departmentId?: number; status?: BedStatus }) {
+    const existing = await prisma.bed.findUnique({ where: { id: bedId } });
+    if (!existing) throw new AppError('Bed not found', 404);
+
+    if (data.departmentId) {
+      const department = await prisma.department.findUnique({ where: { id: data.departmentId } });
+      if (!department) throw new AppError('Department not found', 404);
+    }
+
+    return prisma.bed.update({ where: { id: bedId }, data });
+  }
+
+  static async delete(bedId: number) {
+    const existing = await prisma.bed.findUnique({ where: { id: bedId } });
+    if (!existing) throw new AppError('Bed not found', 404);
+
+    await prisma.bed.delete({ where: { id: bedId } });
+    return existing;
   }
 
   static async assign(bedId: number) {

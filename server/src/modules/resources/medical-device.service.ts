@@ -24,6 +24,15 @@ export class MedicalDeviceService {
     }));
   }
 
+  static async create(data: { name: string; type: string; departmentId: number }) {
+    const department = await prisma.department.findUnique({ where: { id: data.departmentId } });
+    if (!department) throw new AppError('Department not found', 404);
+
+    return prisma.medicalDevice.create({
+      data: { name: data.name, type: data.type, departmentId: data.departmentId, status: 'AVAILABLE' },
+    });
+  }
+
   static async assign(deviceId: number) {
     const device = await prisma.medicalDevice.findUnique({ where: { id: deviceId } });
     if (!device) throw new AppError('Medical device not found', 404);
