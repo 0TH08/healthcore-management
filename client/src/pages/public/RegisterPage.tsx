@@ -62,12 +62,7 @@ export default function RegisterPage() {
           required
           minLength={8}
         />
-        <label>Role</label>
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          {ROLES.map((r) => (
-            <option key={r} value={r}>{r.charAt(0) + r.slice(1).toLowerCase()}</option>
-          ))}
-        </select>
+        
         <button type="submit" className="btn btn-primary btn-block">Register</button>
         <div className="card-links">
           <Link to="/login">Already have an account? Sign in</Link>
