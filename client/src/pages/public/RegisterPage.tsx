@@ -3,15 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../auth/AuthContext';
 
-const ROLES = ['PATIENT', 'DOCTOR', 'NURSE', 'ADMIN'] as const;
-
 export default function RegisterPage() {
   const { register, user } = useAuth();
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<string>('PATIENT');
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -22,7 +19,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
     try {
-      await register(name, email, password, role);
+      await register(name, email, password, 'PATIENT');
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.data?.message) {
         setError(err.response.data.message);

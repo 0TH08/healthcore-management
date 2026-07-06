@@ -384,17 +384,32 @@ async function main() {
     },
   });
 
-  console.log('Seeding audit log...');
+  console.log('Seeding audit logs...');
 
-  await prisma.auditLog.create({
-    data: {
-      adminId: adminUser.id,
-      action: 'SEED_DATABASE',
-      entity: 'System',
-      entityId: 0,
-      details: 'Initial database seeding completed.',
-    },
-  });
+  const auditEntries = [
+    { action: 'CREATE', entity: 'HospitalNetwork', entityId: network.id, details: `Created network "${network.name}"` },
+    { action: 'CREATE', entity: 'Hospital', entityId: hospital.id, details: `Created hospital "${hospital.name}"` },
+    { action: 'CREATE', entity: 'Department', entityId: cardiology.id, details: `Created department "${cardiology.name}"` },
+    { action: 'CREATE', entity: 'Department', entityId: emergency.id, details: `Created department "${emergency.name}"` },
+    { action: 'CREATE', entity: 'Department', entityId: radiology.id, details: `Created department "${radiology.name}"` },
+    { action: 'CREATE', entity: 'StaffProfile', entityId: doctorUser.id, details: `Created DOCTOR account "Jane Smith"` },
+    { action: 'CREATE', entity: 'StaffProfile', entityId: nurseUser.id, details: `Created NURSE account "Emily Jones"` },
+    { action: 'CREATE', entity: 'StaffProfile', entityId: adminUser.id, details: `Created ADMIN account "Robert Wilson"` },
+    { action: 'CREATE', entity: 'PatientProfile', entityId: patientUser.id, details: `Created PATIENT account "John Doe"` },
+    { action: 'SEED_BEDS', entity: 'Bed', entityId: 0, details: 'Seeded 5 beds across departments' },
+    { action: 'SEED_DEVICES', entity: 'MedicalDevice', entityId: 0, details: 'Seeded 5 medical devices across departments' },
+    { action: 'SEED_TIMESLOTS', entity: 'TimeSlot', entityId: 0, details: 'Seeded 10 appointment time slots' },
+    { action: 'SEED_RECORDS', entity: 'MedicalRecord', entityId: 0, details: 'Seeded 2 medical records with allergies and prescriptions' },
+    { action: 'SEED_TRIAGE', entity: 'TriageCase', entityId: 0, details: 'Seeded 3 triage cases at varying priorities' },
+    { action: 'SEED_SCHEDULES', entity: 'Schedule', entityId: 0, details: 'Seeded 4 schedules with shifts' },
+    { action: 'SEED_COMPLETE', entity: 'System', entityId: 0, details: 'Initial database seeding completed successfully.' },
+  ];
+
+  for (const entry of auditEntries) {
+    await prisma.auditLog.create({
+      data: { adminId: adminUser.id, ...entry },
+    });
+  }
 
   console.log('Seed completed successfully.');
 }

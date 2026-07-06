@@ -5,7 +5,15 @@ import apiClient from '../../api/apiClient';
 export default function AppointmentBookingPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const timeSlotId = (location.state as { timeSlotId?: number })?.timeSlotId;
+  const state = location.state as {
+    timeSlotId?: number;
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+    doctorName?: string;
+    departmentName?: string;
+  } | null;
+  const timeSlotId = state?.timeSlotId;
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -52,7 +60,15 @@ export default function AppointmentBookingPage() {
     <div>
       <h1>Confirm Booking</h1>
       <div className="card" style={{ maxWidth: 500 }}>
-        <p>Timeslot ID: <strong>{timeSlotId}</strong></p>
+        {state?.date && (
+          <div style={{ marginBottom: 16, lineHeight: 1.8 }}>
+            <p><strong>Date:</strong> {new Date(state.date).toLocaleDateString()}</p>
+            <p><strong>Time:</strong> {state.startTime} – {state.endTime}</p>
+            <p><strong>Doctor:</strong> {state.doctorName}</p>
+            <p><strong>Department:</strong> {state.departmentName}</p>
+          </div>
+        )}
+        {!state?.date && <p>Timeslot ID: <strong>{timeSlotId}</strong></p>}
         {error && <div className="alert alert-error">{error}</div>}
         <button className="btn btn-primary btn-block" disabled={loading} onClick={handleBook}>
           {loading ? 'Booking...' : 'Confirm & Book'}

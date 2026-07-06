@@ -66,6 +66,13 @@ const roleSchema = z.object({
 });
 
 export class InfrastructureController {
+  static async getHospitals(_req: Request, res: Response, next: NextFunction) {
+    try {
+      const hospitals = await HospitalService.getAll();
+      res.json({ status: 'ok', hospitals });
+    } catch (err) { next(err); }
+  }
+
   static async createHospital(req: Request, res: Response, next: NextFunction) {
     try {
       const data = createHospitalSchema.parse(req.body);

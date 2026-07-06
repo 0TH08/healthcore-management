@@ -39,6 +39,7 @@ export class TimeSlotService {
       startTime: slot.startTime,
       endTime: slot.endTime,
       isBooked: slot.isBooked,
+      doctorId: slot.doctorId,
       doctorName: slot.doctor.user.name,
       departmentName: slot.department.name,
     }));

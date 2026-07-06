@@ -75,7 +75,16 @@ export default function SearchAppointmentsPage() {
             </div>
             <button
               className="btn btn-primary"
-              onClick={() => navigate('/patient/book', { state: { timeSlotId: s.id } })}
+              onClick={() => navigate('/patient/book', {
+                state: {
+                  timeSlotId: s.id,
+                  date: s.date,
+                  startTime: s.startTime,
+                  endTime: s.endTime,
+                  doctorName: s.doctorName,
+                  departmentName: s.departmentName,
+                },
+              })}
             >
               Book
             </button>

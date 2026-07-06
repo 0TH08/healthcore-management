@@ -2,6 +2,13 @@ import { prisma } from '../../utils/prisma';
 import { AppError } from '../../middleware/error.middleware';
 
 export class HospitalService {
+  static async getAll() {
+    return prisma.hospital.findMany({
+      include: { network: { select: { name: true } } },
+      orderBy: { name: 'asc' },
+    });
+  }
+
   static async create(data: { name: string; address: string; networkId: number }) {
     const network = await prisma.hospitalNetwork.findUnique({ where: { id: data.networkId } });
     if (!network) throw new AppError('Hospital network not found', 404);

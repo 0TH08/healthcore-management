@@ -122,7 +122,7 @@ export default function TriageQueuePage() {
 
       <div className="triage-list">
         {queue.map((c) => (
-          <div key={c.id} className="triage-card">
+          <div key={c.id} className={`triage-card priority-${c.priority.toLowerCase()}`}>
             <div className="triage-header">
               <strong>#{c.id} {c.patientName}</strong>
               <span className={`priority-badge ${priorityClass(c.priority)}`}>{c.priority}</span>

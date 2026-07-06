@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import apiClient from '../../api/apiClient';
 
 export default function PasswordRecoveryPage() {
@@ -18,8 +17,9 @@ export default function PasswordRecoveryPage() {
       setMessage(res.data.message);
       setSent(true);
     } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response?.data?.message) {
-        setError(err.response.data.message);
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      if (axiosErr?.response?.data?.message) {
+        setError(axiosErr.response.data.message);
       } else {
         setError('Something went wrong. Please try again.');
       }

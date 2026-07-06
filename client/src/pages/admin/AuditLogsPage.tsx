@@ -10,11 +10,15 @@ interface AuditLog {
 export default function AuditLogsPage() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     apiClient.get('/admin/audit-logs').then((r) => {
       setLogs(r.data.logs);
-    }).catch(() => {}).finally(() => setLoading(false));
+    }).catch((err) => {
+      const msg = err?.response?.data?.message || 'Failed to load audit logs.';
+      setError(msg);
+    }).finally(() => setLoading(false));
   }, []);
 
   if (loading) return <p>Loading...</p>;
@@ -22,7 +26,8 @@ export default function AuditLogsPage() {
   return (
     <div>
       <h1>Audit Logs</h1>
-      {logs.length === 0 && <div className="alert alert-info">No audit logs found.</div>}
+      {error && <div className="alert alert-error">{error}</div>}
+      {!error && logs.length === 0 && <div className="alert alert-info">No audit logs found.</div>}
       <div className="audit-list">
         {logs.map((l) => (
           <div key={l.id} className="audit-row">

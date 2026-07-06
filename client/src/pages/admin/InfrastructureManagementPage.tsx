@@ -4,11 +4,13 @@ import apiClient from '../../api/apiClient';
 interface Department { id: number; name: string; hospitalName: string }
 interface Bed { id: number; bedNumber: string; status: string; departmentName: string }
 interface Device { id: number; name: string; type: string; status: string; departmentName: string }
+interface Hospital { id: number; name: string; address: string }
 
 export default function InfrastructureManagementPage() {
   const tab = (name: string) => <button key={name} className={`btn ${activeTab === name ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setActiveTab(name)} style={{ fontSize: '0.85rem' }}>{name}</button>;
 
   const [activeTab, setActiveTab] = useState('Hospitals');
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [beds, setBeds] = useState<Bed[]>([]);
   const [devices, setDevices] = useState<Device[]>([]);
@@ -31,10 +33,13 @@ export default function InfrastructureManagementPage() {
   const [dvName, setDvName] = useState(''); const [dvType, setDvType] = useState(''); const [dvDeptId, setDvDeptId] = useState('1');
 
   const fetchData = () => {
+    apiClient.get('/admin/hospitals').then((r) => setHospitals(r.data.hospitals)).catch(() => {});
     apiClient.get('/departments').then((r) => setDepartments(r.data.departments)).catch(() => {});
     apiClient.get('/resources/beds').then((r) => setBeds(r.data.beds)).catch(() => {});
     apiClient.get('/resources/devices').then((r) => setDevices(r.data.devices)).catch(() => {});
   };
+
+  useEffect(() => { fetchData(); }, []);
 
   useEffect(fetchData, []);
 
@@ -43,15 +48,15 @@ export default function InfrastructureManagementPage() {
   // --- Hospitals ---
   const createHospital = async (e: FormEvent) => {
     e.preventDefault(); clearMsg();
-    try { const r = await apiClient.post('/admin/hospitals', { name: hName, address: hAddr, networkId: Number(hNetId) }); setMsg(`Hospital created: ${r.data.hospital.name}`); setHName(''); setHAddr(''); } catch (err: unknown) { setMsg((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed.'); }
+    try { const r = await apiClient.post('/admin/hospitals', { name: hName, address: hAddr, networkId: Number(hNetId) }); setMsg(`Hospital created: ${r.data.hospital.name}`); setHName(''); setHAddr(''); fetchData(); } catch (err: unknown) { setMsg((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed.'); }
   };
   const updateHospital = async () => {
     clearMsg();
-    try { const r = await apiClient.patch(`/admin/hospitals/${hUpdId}`, { name: hName || undefined, address: hAddr || undefined, networkId: hNetId ? Number(hNetId) : undefined }); setMsg(`Hospital updated: ${r.data.hospital.name}`); setHUpdId(''); } catch (err: unknown) { setMsg((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed.'); }
+    try { const r = await apiClient.patch(`/admin/hospitals/${hUpdId}`, { name: hName || undefined, address: hAddr || undefined, networkId: hNetId ? Number(hNetId) : undefined }); setMsg(`Hospital updated: ${r.data.hospital.name}`); setHUpdId(''); fetchData(); } catch (err: unknown) { setMsg((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed.'); }
   };
   const deleteHospital = async () => {
     clearMsg();
-    try { await apiClient.delete(`/admin/hospitals/${hDelId}`); setMsg('Hospital deleted.'); setHDelId(''); } catch (err: unknown) { setMsg((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed.'); }
+    try { await apiClient.delete(`/admin/hospitals/${hDelId}`); setMsg('Hospital deleted.'); setHDelId(''); fetchData(); } catch (err: unknown) { setMsg((err as { response?: { data?: { message?: string } } })?.response?.data?.message || 'Failed.'); }
   };
 
   // --- Departments ---
@@ -98,8 +103,9 @@ export default function InfrastructureManagementPage() {
       {msg && <div className="alert alert-info">{msg}</div>}
 
       {/* Existing Data Overview */}
-      {activeTab !== 'Hospitals' && activeTab !== 'Devices' && (
+      {activeTab !== 'Devices' && (
         <div style={{ marginBottom: 20 }}>
+          {activeTab === 'Hospitals' && hospitals.length > 0 && <><h3>Existing Hospitals</h3>{hospitals.map((h) => <div key={h.id} className="admin-row"><strong>{h.name}</strong> — {h.address}</div>)}</>}
           {activeTab === 'Departments' && <><h3>Existing Departments</h3>{departments.map((d) => <div key={d.id} className="admin-row">{d.id} — {d.name} ({d.hospitalName})</div>)}</>}
           {activeTab === 'Beds' && <><h3>Existing Beds</h3>{beds.map((b) => <div key={b.id} className="admin-row">{b.id} — {b.bedNumber} [{b.status}] {b.departmentName}</div>)}</>}
         </div>

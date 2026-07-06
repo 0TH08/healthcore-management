@@ -5,6 +5,7 @@ import { roleMiddleware } from '../../middleware/role.middleware';
 
 const router = Router();
 
+router.get('/admin/hospitals', authMiddleware, roleMiddleware('ADMIN'), InfrastructureController.getHospitals);
 router.post('/admin/hospitals', authMiddleware, roleMiddleware('ADMIN'), InfrastructureController.createHospital);
 router.patch('/admin/hospitals/:hospitalId', authMiddleware, roleMiddleware('ADMIN'), InfrastructureController.updateHospital);
 router.delete('/admin/hospitals/:hospitalId', authMiddleware, roleMiddleware('ADMIN'), InfrastructureController.deleteHospital);
