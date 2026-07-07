@@ -9,12 +9,14 @@ export default function MyMedicalRecordPage() {
   const [records, setRecords] = useState<MedicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch the logged-in patient's medical records (including allergies & prescriptions)
   useEffect(() => {
     apiClient.get('/medical-records/me').then((r) => {
       setRecords(r.data.records);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
+  // Downloads records as a .txt file using a blob + hidden anchor trick
   const handleExport = () => {
     apiClient.get('/medical-records/me/export', { responseType: 'blob' }).then((res) => {
       const url = window.URL.createObjectURL(new Blob([res.data]));

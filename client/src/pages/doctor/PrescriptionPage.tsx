@@ -14,6 +14,7 @@ export default function PrescriptionPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Posts a new prescription to a specific medical record; endDate is optional
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);

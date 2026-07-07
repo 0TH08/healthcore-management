@@ -1,11 +1,24 @@
 import { prisma } from '../../utils/prisma';
 import { AppError } from '../../middleware/error.middleware';
 
+// Used by both the patient (read own records / export) and doctor (consult & update) flows.
+// exportRecords generates a plain-text file format for download.
+//
+// Design notes:
+// - All methods that take patientId expect the PatientProfile ID (not UserAccount ID).
+//   Callers like PatientService.findByUserId() resolve userId → patientId first.
+// - The update method uses partial data (only diagnosis and notes are updatable).
+//   Allergies and prescriptions are managed through separate services to keep
+//   responsibilities clear.
+// - The export format is deliberately simple (plain text, not CSV/PDF) to keep
+//   the MVP scope small. The format is readable both as a text file and when
+//   displayed in a <pre> tag on the frontend.
 export class MedicalRecordService {
   static async getPatientRecords(patientId: number) {
     return prisma.medicalRecord.findMany({
       where: { patientId },
       include: { allergies: true, prescriptions: true },
+      // Most recent first: the frontend usually shows the latest record at the top.
       orderBy: { date: 'desc' },
     });
   }
@@ -28,11 +41,14 @@ export class MedicalRecordService {
   }
 
   static async updateRecord(recordId: number, data: { diagnosis?: string; notes?: string }) {
+    // Check existence first to give a specific 404 rather than Prisma's generic error.
     const existing = await prisma.medicalRecord.findUnique({ where: { id: recordId } });
     if (!existing) {
       throw new AppError('Medical record not found', 404);
     }
 
+    // Prisma's update will only modify the fields that are provided (undefined fields
+    // are left unchanged). This allows partial updates from the frontend form.
     return prisma.medicalRecord.update({
       where: { id: recordId },
       data,
@@ -46,6 +62,10 @@ export class MedicalRecordService {
       throw new AppError('No medical records found for export', 404);
     }
 
+    // Generates a plain-text document structured with headers per record.
+    // The format is designed to be both human-readable and parseable.
+    // Each record section includes: date, diagnosis, notes, allergies list,
+    // and prescriptions list with their details.
     const lines: string[] = ['MEDICAL RECORDS EXPORT', '=====================', ''];
     for (const r of records) {
       lines.push(`Record #${r.id}`);

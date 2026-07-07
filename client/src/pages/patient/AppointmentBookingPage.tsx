@@ -5,6 +5,7 @@ import apiClient from '../../api/apiClient';
 export default function AppointmentBookingPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  // Expects slot data (timeSlotId, date, etc.) passed via router state from SearchAppointmentsPage
   const state = location.state as {
     timeSlotId?: number;
     date?: string;
@@ -19,6 +20,7 @@ export default function AppointmentBookingPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
+  // Guard: direct navigation without a selected slot shows an error
   if (!timeSlotId) {
     return (
       <div>
@@ -29,6 +31,7 @@ export default function AppointmentBookingPage() {
     );
   }
 
+  // POST the selected timeSlotId to confirm the booking
   const handleBook = async () => {
     setLoading(true);
     setError('');

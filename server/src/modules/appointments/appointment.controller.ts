@@ -8,6 +8,8 @@ const bookSchema = z.object({
   timeSlotId: z.number().int().positive('Valid timeSlotId is required'),
 });
 
+// Thin controller: validates input, calls the service layer, shapes the response.
+// Business rules (e.g. "cannot book past slots", "slot must be available") live in the service.
 export class AppointmentController {
   static async getDepartments(_req: Request, res: Response, next: NextFunction) {
     try {
@@ -68,6 +70,8 @@ export class AppointmentController {
     }
   }
 
+  // Accepts optional query params: departmentId, doctorId, date.
+  // Returns only unbooked slots filtered by the provided criteria.
   static async getTimeSlots(req: Request, res: Response, next: NextFunction) {
     try {
       const departmentId = req.query.departmentId

@@ -16,11 +16,13 @@ export default function SearchAppointmentsPage() {
   const [date, setDate] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Load departments & doctors on mount for filter dropdowns
   useEffect(() => {
     apiClient.get('/departments').then((r) => setDepartments(r.data.departments)).catch(() => {});
     apiClient.get('/doctors').then((r) => setDoctors(r.data.doctors)).catch(() => {});
   }, []);
 
+  // Search available slots; only unbooked slots shown by filtering client-side
   const search = async () => {
     setLoading(true);
     try {
@@ -35,6 +37,7 @@ export default function SearchAppointmentsPage() {
     }
   };
 
+  // Narrows doctor list when a department is selected
   const filteredDoctors = deptId
     ? doctors.filter((d) => d.departmentId === Number(deptId))
     : doctors;

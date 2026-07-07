@@ -15,6 +15,7 @@ export default function PatientSearchPage() {
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Searches patients by name/email; sets searched flag to show "no results" state
   const handleSearch = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);

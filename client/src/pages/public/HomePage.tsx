@@ -4,10 +4,12 @@ import { useAuth } from '../../auth/AuthContext';
 export default function HomePage() {
   const { user, token } = useAuth();
 
+  // Landingspage — redirects authenticated users to their role dashboard
   if (token && user) {
     return <Navigate to={`/${user.role.toLowerCase()}`} replace />;
   }
 
+  // Unauthenticated landing page with Login / Register links
   return (
     <div className="page-center">
       <div style={{ textAlign: 'center', padding: '0 16px' }}>

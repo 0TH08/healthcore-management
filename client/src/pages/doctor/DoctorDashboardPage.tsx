@@ -3,6 +3,7 @@ import { useAuth } from '../../auth/AuthContext';
 
 export default function DoctorDashboardPage() {
   const { user } = useAuth();
+  // Static dashboard with navigation cards — no data loading needed
   return (
     <div>
       <h1>Doctor Dashboard</h1>

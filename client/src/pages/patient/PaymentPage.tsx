@@ -5,6 +5,7 @@ import apiClient from '../../api/apiClient';
 export default function PaymentPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  // Receives appointmentId via router state from MyAppointmentsPage
   const appointmentId = (location.state as { appointmentId?: number })?.appointmentId;
 
   const [cardNumber, setCardNumber] = useState('');
@@ -12,6 +13,7 @@ export default function PaymentPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Guard: no appointment selected redirects back
   if (!appointmentId) {
     return (
       <div>
@@ -22,6 +24,7 @@ export default function PaymentPage() {
     );
   }
 
+  // Sends payment request; strips spaces from card number before sending
   const handlePay = async () => {
     setLoading(true);
     setError('');

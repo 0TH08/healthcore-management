@@ -11,6 +11,7 @@ export default function BedDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
+  // Fetch all beds in the system
   const fetchBeds = () => {
     setLoading(true);
     apiClient.get('/resources/beds').then((r) => setBeds(r.data.beds)).catch(() => {}).finally(() => setLoading(false));
@@ -18,6 +19,7 @@ export default function BedDashboardPage() {
 
   useEffect(fetchBeds, []);
 
+  // Toggle bed occupancy via PATCH assign/release
   const assignBed = async (bedId: number) => {
     setMessage('');
     try {

@@ -8,6 +8,8 @@ import { AuditLogService } from '../audit/audit-log.service';
 import { BedService } from '../resources/bed.service';
 import { MedicalDeviceService } from '../resources/medical-device.service';
 
+// Zod schemas for all admin CRUD operations.
+// createStaff and assignRole explicitly reject PATIENT via .refine().
 const createHospitalSchema = z.object({
   name: z.string().min(1, 'Hospital name is required'),
   address: z.string().min(1, 'Address is required'),
@@ -65,6 +67,7 @@ const roleSchema = z.object({
   }).refine((r) => r !== 'PATIENT', { message: 'Cannot assign PATIENT role via staff management' }),
 });
 
+// Every mutating action calls AuditLogService.record() to maintain a full audit trail.
 export class InfrastructureController {
   static async getHospitals(_req: Request, res: Response, next: NextFunction) {
     try {

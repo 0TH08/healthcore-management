@@ -1,6 +1,11 @@
 import { prisma } from '../../utils/prisma';
 import { AppError } from '../../middleware/error.middleware';
 
+// CRUD for hospitals. Delete is blocked if the hospital still has departments.
+//
+// This is the top of the infrastructure hierarchy: Network → Hospital → Department.
+// We enforce that deletes cascade only through explicit application logic, not DB cascades.
+// This makes it harder to accidentally delete a hospital that has departments.
 export class HospitalService {
   static async getAll() {
     return prisma.hospital.findMany({

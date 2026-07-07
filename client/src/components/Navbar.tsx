@@ -1,6 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
+// Navigation bar shown on every authenticated page.
+// Displays role-specific links and the current user's name + logout button.
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();

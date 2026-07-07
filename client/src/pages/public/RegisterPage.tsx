@@ -11,10 +11,12 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  // Redirect authenticated users away from the register page
   useEffect(() => {
     if (user) navigate(`/${user.role.toLowerCase()}`, { replace: true });
   }, [user, navigate]);
 
+  // Hardcodes PATIENT role — only patient self-registration is allowed
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');

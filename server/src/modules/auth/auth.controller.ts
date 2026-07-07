@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { AuthService } from './auth.service';
 
+// Zod schemas validate request bodies before reaching the service layer.
+// This keeps the controller thin — validation, response shaping, and error handling only.
 const registerSchema = z.object({
   email: z.string().email('Invalid email format'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -46,6 +48,7 @@ export class AuthController {
     }
   }
 
+  // Logout is stateless — the client discards the JWT.
   static async logout(_req: Request, res: Response) {
     res.json({ status: 'ok', message: 'Logged out successfully' });
   }
@@ -59,6 +62,8 @@ export class AuthController {
     }
   }
 
+  // Returns a generic success message regardless of whether the email exists
+  // (prevents email enumeration by attackers).
   static async recoverPassword(req: Request, res: Response, next: NextFunction) {
     try {
       const data = recoverPasswordSchema.parse(req.body);

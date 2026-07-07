@@ -3,6 +3,8 @@ import { TriageController } from './triage.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { roleMiddleware } from '../../middleware/role.middleware';
 
+// Triage endpoints: queue-viewing is open to NURSE, DOCTOR, and ADMIN but mutations
+// (create, update priority/status, broadcast) are NURSE-only.
 const router = Router();
 
 router.get(

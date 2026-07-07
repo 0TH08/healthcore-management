@@ -8,6 +8,7 @@ export default function PasswordRecoveryPage() {
   const [error, setError] = useState('');
   const [sent, setSent] = useState(false);
 
+  // Submits email to trigger password recovery email; sent flag hides form on success
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
@@ -29,6 +30,7 @@ export default function PasswordRecoveryPage() {
   return (
     <div className="page-center">
       <div className="card">
+        {/* Only shows the form before the email is sent (sent == false) */}
         <h1>Password Recovery</h1>
         {message && <div className="alert alert-success">{message}</div>}
         {error && <div className="alert alert-error">{error}</div>}

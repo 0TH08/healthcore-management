@@ -8,6 +8,7 @@ export default function PatientDashboardPage() {
   const [apptCount, setApptCount] = useState(0);
   const [recordCount, setRecordCount] = useState(0);
 
+  // Fetch summary counts for the dashboard cards, failures are silently ignored
   useEffect(() => {
     apiClient.get('/appointments/me').then((r) => setApptCount(r.data.appointments.length)).catch(() => {});
     apiClient.get('/medical-records/me').then((r) => setRecordCount(r.data.records.length)).catch(() => {});

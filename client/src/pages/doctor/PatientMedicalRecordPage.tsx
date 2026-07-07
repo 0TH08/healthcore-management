@@ -13,11 +13,13 @@ export default function PatientMedicalRecordPage() {
   const patientName = (location.state as { patientName?: string })?.patientName ?? `Patient #${patientId}`;
   const [records, setRecords] = useState<MedicalRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  // Inline editing state: which record is being edited + current form values
   const [editingRecord, setEditingRecord] = useState<number | null>(null);
   const [editDiagnosis, setEditDiagnosis] = useState('');
   const [editNotes, setEditNotes] = useState('');
   const [updateMsg, setUpdateMsg] = useState('');
 
+  // Fetch medical records for the selected patient by patientId from URL
   useEffect(() => {
     apiClient.get(`/medical-records/${patientId}`).then((r) => {
       setRecords(r.data.records);
@@ -31,6 +33,7 @@ export default function PatientMedicalRecordPage() {
     setUpdateMsg('');
   };
 
+  // PATCH to update diagnosis/notes; optimistically merges response into local state
   const saveUpdate = async () => {
     if (!editingRecord) return;
     try {

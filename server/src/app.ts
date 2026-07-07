@@ -16,6 +16,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// All 44 endpoints are mounted under /api.
+// Some modules define prefixes in their own router (e.g. /api/auth), others
+// define bare paths like /departments and are mounted at /api directly.
+// The errorMiddleware is the last handler to catch anything that falls through.
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', appointmentRoutes);

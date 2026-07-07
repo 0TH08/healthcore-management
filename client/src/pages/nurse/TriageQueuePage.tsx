@@ -26,6 +26,7 @@ export default function TriageQueuePage() {
   // Update fields
   const [updating, setUpdating] = useState<number | null>(null);
 
+  // Fetch the full triage queue
   const fetchQueue = () => {
     setLoading(true);
     apiClient.get('/triage/queue').then((r) => setQueue(r.data.queue)).catch(() => {}).finally(() => setLoading(false));
@@ -33,6 +34,7 @@ export default function TriageQueuePage() {
 
   useEffect(fetchQueue, []);
 
+  // Creates a new triage case and refreshes the queue
   const handleCreate = async (e: FormEvent) => {
     e.preventDefault();
     setCreateMsg('');
@@ -50,6 +52,7 @@ export default function TriageQueuePage() {
     }
   };
 
+  // Updates priority or status inline via select dropdown change + re-fetches queue
   const updatePriority = async (id: number, priority: string) => {
     try {
       await apiClient.patch(`/triage/${id}/priority`, { priority });

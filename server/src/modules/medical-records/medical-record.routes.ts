@@ -3,6 +3,8 @@ import { MedicalRecordController } from './medical-record.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { roleMiddleware } from '../../middleware/role.middleware';
 
+// Patients read and export their own records; doctors search patients, consult,
+// update records, and create prescriptions. All endpoints require auth.
 const router = Router();
 
 router.get(

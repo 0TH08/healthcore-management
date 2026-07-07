@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import bcrypt from 'bcryptjs';
 
+// Uses its own PrismaClient (not the shared one from utils/prisma.ts) because
+// seed.ts runs as a standalone script, not as part of the Express app.
 const adapter = new PrismaBetterSqlite3({ url: 'file:./dev.db' });
 const prisma = new PrismaClient({ adapter });
 
@@ -19,9 +21,25 @@ function addHours(date: Date, hours: number): Date {
   return result;
 }
 
+// Seed creates demo users, a hospital network with departments, beds, devices,
+// time slots (future-dated), medical records with allergies + prescriptions,
+// triage cases, schedules/shifts, and audit logs.
+// Uses deleteMany in reverse FK order inside a transaction to allow safe re-runs.
+//
+// Design notes:
+// - All users share password "Password123!" for convenience. In production,
+//   every user would set their own password.
+// - Time slots are always generated relative to the current date (today + N days),
+//   so they're always in the future regardless of when the seed runs.
+// - The clear step runs inside $transaction so that if any delete fails,
+//   the entire clear is rolled back rather than leaving a partially-cleared DB.
 async function main() {
   console.log('Clearing existing data...');
 
+  // Delete order matters: child tables must be deleted before their parents
+  // to avoid foreign key violations. The order is: leaf tables first,
+  // then junction/referencing tables, then the core tables they reference.
+  // Wrapping in $transaction ensures atomicity.
   await prisma.$transaction([
     prisma.auditLog.deleteMany(),
     prisma.shift.deleteMany(),
@@ -45,6 +63,7 @@ async function main() {
 
   console.log('Seeding users...');
 
+  // All demo users share the same bcrypt-hashed password "Password123!"
   const hashedPassword = await bcrypt.hash('Password123!', SALT_ROUNDS);
 
   const patientUser = await prisma.userAccount.create({
@@ -101,6 +120,8 @@ async function main() {
     },
   });
 
+  // Three departments with distinct medical specialties to demonstrate
+  // the infrastructure hierarchy and resource allocation features.
   const cardiology = await prisma.department.create({
     data: { name: 'Cardiology', hospitalId: hospital.id },
   });
@@ -115,6 +136,7 @@ async function main() {
 
   console.log('Seeding profiles...');
 
+  // PatientProfile for the demo patient.
   await prisma.patientProfile.create({
     data: {
       userId: patientUser.id,
@@ -124,6 +146,8 @@ async function main() {
     },
   });
 
+  // Staff profiles for each demo staff member, each assigned to a different
+  // department to show cross-department functionality.
   await prisma.staffProfile.create({
     data: {
       userId: doctorUser.id,
@@ -185,6 +209,9 @@ async function main() {
     where: { userId: doctorUser.id },
   });
 
+  // Slots are created for the next 5 days so they are always in the future.
+  // This means the seed data stays usable even if the app hasn't been reset
+  // in a few days (slots up to 5 days out are always available).
   const today = new Date();
   const timeSlots = [
     { date: addDays(today, 1), startTime: '09:00', endTime: '09:30' },
@@ -218,6 +245,7 @@ async function main() {
     where: { userId: patientUser.id },
   });
 
+  // Record 1: hypertension diagnosis with a prescription and an allergy.
   const record1 = await prisma.medicalRecord.create({
     data: {
       patientId: patientProfile!.id,
@@ -227,6 +255,9 @@ async function main() {
     },
   });
 
+  // Record 2: diabetes diagnosis with its own prescription and a different allergy.
+  // Having two records demonstrates the list view and per-record scoping of
+  // allergies and prescriptions.
   const record2 = await prisma.medicalRecord.create({
     data: {
       patientId: patientProfile!.id,
@@ -282,6 +313,10 @@ async function main() {
     where: { userId: nurseUser.id },
   });
 
+  // Three triage cases demonstrating the workflow states:
+  // - HIGH/IN_PROGRESS: actively being handled
+  // - MEDIUM/WAITING: in the queue
+  // - LOW/COMPLETED: already discharged
   await prisma.triageCase.create({
     data: {
       patientId: patientProfile!.id,
@@ -316,6 +351,7 @@ async function main() {
 
   console.log('Seeding schedules and shifts...');
 
+  // Doctor: morning shifts on day+1 and day+2
   const schedule1 = await prisma.schedule.create({
     data: {
       staffId: doctorProfile!.id,
@@ -350,6 +386,7 @@ async function main() {
     },
   });
 
+  // Nurse: evening shifts on day+1 and day+3
   const schedule3 = await prisma.schedule.create({
     data: {
       staffId: nurseProfile!.id,
@@ -386,6 +423,8 @@ async function main() {
 
   console.log('Seeding audit logs...');
 
+  // 16 audit log entries covering every seeded entity type for a meaningful admin view.
+  // The admin dashboard displays these to show the history of system changes.
   const auditEntries = [
     { action: 'CREATE', entity: 'HospitalNetwork', entityId: network.id, details: `Created network "${network.name}"` },
     { action: 'CREATE', entity: 'Hospital', entityId: hospital.id, details: `Created hospital "${hospital.name}"` },

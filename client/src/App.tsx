@@ -26,12 +26,15 @@ import StaffManagementPage from './pages/admin/StaffManagementPage';
 import InfrastructureManagementPage from './pages/admin/InfrastructureManagementPage';
 import AuditLogsPage from './pages/admin/AuditLogsPage';
 
+// Redirects the root path to the user's role-based dashboard.
 function RootRedirect() {
   const { user, token } = useAuth();
   if (!token || !user) return <Navigate to="/login" replace />;
   return <Navigate to={`/${user.role.toLowerCase()}`} replace />;
 }
 
+// Route structure: public pages outside the MainLayout, then a protected wrapper
+// with role-gated sub-routes for PATIENT, DOCTOR, NURSE, and ADMIN.
 export default function App() {
   return (
     <AuthProvider>

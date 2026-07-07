@@ -12,6 +12,7 @@ export default function AuditLogsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Fetches admin audit trail; sets error message separately from empty state
   useEffect(() => {
     apiClient.get('/admin/audit-logs').then((r) => {
       setLogs(r.data.logs);

@@ -11,6 +11,7 @@ export default function DoctorSchedulePage() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [error, setError] = useState('');
 
+  // Fetches the doctor's own timeslots by finding their profile via /doctors list
   const fetch = (d: string) => {
     setLoading(true);
     setError('');
@@ -23,6 +24,7 @@ export default function DoctorSchedulePage() {
     }).catch(() => setError('Failed to load doctor profile.'));
   };
 
+  // Refetches schedule when the selected date changes
   useEffect(() => { fetch(date); }, [date]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

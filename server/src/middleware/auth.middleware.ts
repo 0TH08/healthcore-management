@@ -8,6 +8,19 @@ interface JwtPayload {
   role: string;
 }
 
+// Stateless JWT authentication. Every protected route calls this first.
+//
+// Logic:
+// 1. Extract the token from "Authorization: Bearer <token>".
+// 2. Verify the JWT signature using the secret — this confirms the token was
+//    issued by the server and hasn't been tampered with.
+// 3. Look up the user in the database using the userId from the token.
+//    This catches deactivated accounts: even if the JWT is still valid (not expired),
+//    an admin may have set the account to INACTIVE since the token was issued.
+// 4. Attach { userId, role, email, name } to req.user for downstream middleware/controllers.
+//
+// The catch block handles both JWT verification errors (expired, malformed, wrong secret)
+// and any unexpected DB errors.
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
     const header = req.headers.authorization;

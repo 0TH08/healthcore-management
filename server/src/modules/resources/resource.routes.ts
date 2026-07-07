@@ -3,6 +3,8 @@ import { ResourceController } from './resource.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { roleMiddleware } from '../../middleware/role.middleware';
 
+// Bed and device listings are open to any authenticated user;
+// mutations (assign, release, update status) are NURSE-only.
 const router = Router();
 
 router.get('/resources/beds', authMiddleware, ResourceController.getBeds);

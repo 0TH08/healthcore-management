@@ -3,6 +3,7 @@ import { useAuth } from '../../auth/AuthContext';
 
 export default function AdminDashboardPage() {
   const { user } = useAuth();
+  // Admin navigation hub linking to staff, infrastructure, and audit tools
   return (
     <div>
       <h1>Admin Dashboard</h1>

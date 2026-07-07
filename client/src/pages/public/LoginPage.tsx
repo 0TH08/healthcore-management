@@ -10,10 +10,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  // Redirect already-logged-in users to their role dashboard
+
   useEffect(() => {
     if (user) navigate(`/${user.role.toLowerCase()}`, { replace: true });
   }, [user, navigate]);
 
+  // Calls AuthContext.login — the context handles storing token & user
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');

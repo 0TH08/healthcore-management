@@ -20,6 +20,7 @@ export default function StaffManagementPage() {
   const [newRole, setNewRole] = useState('DOCTOR');
   const [roleMsg, setRoleMsg] = useState('');
 
+  // Creates staff via admin endpoint; sends optional fields only if filled in
   const handleCreate = async (e: FormEvent) => {
     e.preventDefault(); setCreateMsg('');
     try {

@@ -3,6 +3,7 @@ import { PaymentController } from './payment.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { roleMiddleware } from '../../middleware/role.middleware';
 
+// All payment endpoints are PATIENT-only — only patients can pay for their appointments.
 const router = Router();
 
 router.post(

@@ -81,6 +81,7 @@ export class TriageController {
     }
   }
 
+  // Broadcasts the current triage queue to mocked hospital information displays.
   static async broadcast(_req: Request, res: Response, next: NextFunction) {
     try {
       const queue = await TriageCaseService.broadcast();

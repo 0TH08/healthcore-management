@@ -13,6 +13,8 @@ const validateSchema = z.object({
 });
 
 export class PaymentController {
+  // Authorize uses the mocked payment gateway — card "4242424242424242" succeeds, others fail.
+  // On success: creates transaction + marks appointment as PAID atomically.
   static async authorize(req: Request, res: Response, next: NextFunction) {
     try {
       const data = authorizeSchema.parse(req.body);

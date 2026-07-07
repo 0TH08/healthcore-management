@@ -32,6 +32,7 @@ export default function InfrastructureManagementPage() {
   // Device form
   const [dvName, setDvName] = useState(''); const [dvType, setDvType] = useState(''); const [dvDeptId, setDvDeptId] = useState('1');
 
+  // Loads all entity lists at once; used both on mount and after mutations
   const fetchData = () => {
     apiClient.get('/admin/hospitals').then((r) => setHospitals(r.data.hospitals)).catch(() => {});
     apiClient.get('/departments').then((r) => setDepartments(r.data.departments)).catch(() => {});

@@ -3,6 +3,8 @@ import { InfrastructureController } from './infrastructure.controller';
 import { authMiddleware } from '../../middleware/auth.middleware';
 import { roleMiddleware } from '../../middleware/role.middleware';
 
+// All infrastructure and staff-management routes are ADMIN-only.
+// Note: only CREATE for medical devices (no update/delete) per constraint D2.
 const router = Router();
 
 router.get('/admin/hospitals', authMiddleware, roleMiddleware('ADMIN'), InfrastructureController.getHospitals);

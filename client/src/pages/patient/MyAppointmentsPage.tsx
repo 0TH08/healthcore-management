@@ -12,6 +12,7 @@ export default function MyAppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch all appointments for the logged-in patient
   const fetch = () => {
     setLoading(true);
     apiClient.get('/appointments/me').then((r) => {
@@ -43,6 +44,7 @@ export default function MyAppointmentsPage() {
             </div>
             <div className="appt-detail">Dr. {a.doctorName} · {a.departmentName}</div>
             <div className="appt-actions">
+              {/* Pay button only for appointments that haven't been paid yet */}
               {(a.status === 'BOOKED' || a.status === 'REQUESTED') && (
                 <button
                   className="btn btn-primary"

@@ -19,6 +19,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// Provides auth state (user + JWT) to the entire app via React context.
+// Persists to localStorage so a page refresh preserves the session.
+// On mount, verifies the stored token by calling GET /auth/me.
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
     const stored = localStorage.getItem('user');

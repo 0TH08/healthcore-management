@@ -14,6 +14,7 @@ export default function DeviceStatusPage() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
+  // Load all devices from the system
   const fetchDevices = () => {
     setLoading(true);
     apiClient.get('/resources/devices').then((r) => setDevices(r.data.devices)).catch(() => {}).finally(() => setLoading(false));

@@ -3,6 +3,7 @@ import { useAuth } from '../../auth/AuthContext';
 
 export default function NurseDashboardPage() {
   const { user } = useAuth();
+  // Static navigation dashboard for triage, bed, and device management
   return (
     <div>
       <h1>Nurse Dashboard</h1>

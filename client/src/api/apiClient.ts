@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+// Shared Axios instance used by all frontend pages.
+// Attaches the JWT from localStorage to every request,
+// and redirects to login on 401 responses.
 const apiClient = axios.create({
   baseURL: '/api',
   headers: { 'Content-Type': 'application/json' },
